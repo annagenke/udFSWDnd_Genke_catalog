@@ -1,0 +1,113 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+<div class="jumbotron">
+    <div class="row">
+        <div class=".col-xs-9">
+            <h1>{{ wish_list.name }}
+                <small>{{ creator.name }}</small>
+            </h1>
+
+        </div>
+    </div>
+</div>
+
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+
+<ul>
+    {% for message in messages %}
+    <div class='alert alert-info'>
+        <li><strong> {{ message }} </strong></li>
+    </div>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+
+
+<div class="row padding-top padding-bottom">
+    <div class="col-md-1"></div>
+    <div class="col-md-11 padding-none">
+        <a href="{{url_for('edit_wish_list', wish_list_id = wish_list.id )}}">
+            <button class="btn btn-default">
+                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>Edit WishList
+            </button>
+        </a>
+        <a href="{{url_for('add_item', wish_list_id = wish_list.id )}}">
+            <button class="btn btn-default">
+                <span class="glyphicon glyphicon-star" aria-hidden="true"></span>Add Item
+            </button>
+        </a>
+        <a href="{{url_for('delete_wish_list', wish_list_id = wish_list.id )}}">
+            <button class="btn btn-default delete">
+                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>Delete WishList
+            </button>
+        </a>
+    </div>
+    <div class="col-md-7"></div>
+</div>
+
+{% if items !=[] %}
+<div class="col-md-1"></div>
+
+<h3> Very High Priority</h3>
+<ul class="list-group">
+    {% for i in items %}
+    {% if i.priority == 'Very High' %}
+    <li class="list-group-item">
+        <h3>{{i.name}}</h3>
+        <p>{{i.price}}</p>
+        <a href='{{url_for('edit_item', wish_list_id = wish_list.id, item_id=i.id ) }}'>Edit</a> |
+        <a href='{{url_for('delete_item', wish_list_id = wish_list.id, item_id=i.id ) }}'>Delete</a>
+    </li>
+    {% endif %}
+    {% endfor %}
+</ul>
+
+<h3>High Priority</h3>
+<ul class="list-group">
+    {% for i in items %}
+    {% if i.priority == 'High' %}
+    <li class="list-group-item">
+        <h3>{{i.name}}</h3>
+        <p>{{i.price}}</p>
+        <a href='{{url_for('edit_item', wish_list_id = wish_list.id, item_id=i.id ) }}'>Edit</a> |
+        <a href='{{url_for('delete_item', wish_list_id = wish_list.id, item_id=i.id ) }}'>Delete</a>
+    </li>
+    {% endif %}
+    {% endfor %}
+</ul>
+
+<h3>Low Priority</h3>
+<ul class="list-group">
+    {% for i in items %}
+    {% if i.priority == 'Low' %}
+    <li class="list-group-item">
+        <h3>{{i.name}}</h3>
+        <p>{{i.price}}</p>
+        <a href='{{url_for('edit_item', wish_list_id = wish_list.id, item_id=i.id ) }}'>Edit</a> |
+        <a href='{{url_for('delete_item', wish_list_id = wish_list.id, item_id=i.id ) }}'>Delete</a>
+    </li>
+</ul>
+{% endif %}
+{% endfor %}
+<h3>Very Low Priority</h3>
+<ul class="list-group">
+    {% for i in items %}
+    {% if i.priority == 'Very Low' %}
+    <li class="list-group-item">
+        <h3>{{i.name}}</h3>
+        <p>{{i.price}}</p>
+        <a href='{{url_for('edit_item', wish_list_id = wish_list.id, item_id=i.id ) }}'>Edit</a> |
+        <a href='{{url_for('delete_item', wish_list_id = wish_list.id, item_id=i.id ) }}'>Delete</a>
+    </li>
+    {% endif %}
+    {% endfor %}
+</ul>
+</div>
+<div class="col-md-1"></div>
+</div>
+{% endif %}
+{% endblock %}

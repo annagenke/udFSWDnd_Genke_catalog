@@ -1,0 +1,20 @@
+<nav class="navbar navbar-default">
+<div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand">Wish List App</a>
+    </div>
+	<ul class="nav navbar-nav">
+		<li class="active"><a href="{{url_for('show_all_wish_lists')}}">
+			<span class="glyphicon glyphicon-home"></span>Show All Wish Lists
+		</a></li>'
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+        <li><a href="{{url_for('show_login')}}">
+                <span class="glyphicon glyphicon-log-in"></span> Log in
+        </a></li>
+        <li><a href="{{url_for('gdisconnect')}}">
+                <span class="glyphicon glyphicon-log-out"></span> Log out
+        </a></li>
+    </ul>
+</div>
+</nav>

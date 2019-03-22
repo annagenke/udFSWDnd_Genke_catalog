@@ -1,0 +1,49 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+	<div class="row banner menu">
+		<div class="col-md-11 col-md-offset-1 padding-none">
+			<h1>Edit Item</h1>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6 col-md-offset-1 padding-top">
+			<form action="#" method = "post">
+				<div class="form-group">
+					<label for="name">Name:</label>
+					<input type ="text" maxlength="100" class="form-control" name="name" value="{{item.name }}">
+
+					<label for="price">Price:</label>
+					<div class="input-group">
+						<div class="input-group-addon">$</div>
+						<input type ="text" maxlength="10" class="form-control" name="price" value="{{item.price}}">
+					</div>
+					<label for="priority">priority:</label>
+					<div class="radio">
+					  <label>
+					    <input type="radio" name="priority" id="priority1" value="Very High" {% if item.priority == 'Very High'%}checked{%endif%}>Very High
+					  </label>
+					</div>
+					<div class="radio">
+					  <label>
+					    <input type="radio" name="priority" id="priority2" value="High" {% if item.priority == 'High' %}checked{%endif%}>High
+					  </label>
+					</div>
+					<div class="radio">
+					  <label>
+					    <input type="radio" name="priority" id="priority3" value="Low" {% if item.priority == 'Low'%}checked{%endif%}>Low
+					  </label>
+					</div>
+					<div class="radio">
+					  <label>
+					    <input type="radio" name="priority" id="priority4" value="Very Low" {%if item.priority == 'Very Low'%}checked{%endif%}>Very Low
+					  </label>
+					</div>
+					<button type="submit" class="btn btn-default" id="submit" type="submit">
+					<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>Save</button>
+
+				</div>
+			</form>
+		</div>
+	</div>
+{% endblock %}

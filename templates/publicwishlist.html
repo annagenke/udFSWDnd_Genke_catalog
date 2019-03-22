@@ -1,0 +1,82 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+<div class="jumbotron">
+    <h1>{{ wish_list.name }}
+        <small>{{ creator.name }}</small>
+    </h1>
+</div>
+
+<div class="row padding-top padding-bottom">
+    <div class="col-md-1"></div>
+    <div class="col-md-11 padding-none">
+
+    </div>
+    <div class="col-md-7"></div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li><strong> {{ message }} </strong></li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+    </div>
+</div>
+{% if items !=[] %}
+<div class="col-med-1"></div>
+
+<h3>Very High Priority</h3>
+<ul class="list-group">
+    {% for i in items %}
+    {% if i.priority == 'Very High' %}
+    <li class="list-group-item">
+        <h3>{{i.name}}</h3>
+        <p>{{i.price}}</p>
+    </li>
+
+{% endif %}
+{% endfor %}
+</ul>
+<h3>High Priority</h3>
+<ul class="list-group">
+    {% for i in items %}
+    {% if i.priority == 'High' %}
+    <li class="list-group-item">
+        <h3>{{i.name}}</h3>
+        <p class="menu-price">{{i.price}}</p>
+    </li>
+        {% endif %}
+        {% endfor %}
+</ul>
+<h3>Low Priority</h3>
+<ul class="list-group">
+    {% for i in items %}
+    {% if i.priority == 'Low' %}
+    <li class="list-group-item">
+        <h3>{{i.name}}</h3>
+        <p>{{i.price}}</p>
+    </li>
+    {% endif %}
+    {% endfor %}
+</ul>
+<h3>Very Low Priority</h3>
+<ul class="list-group">
+    {% for i in items %}
+    {% if i.priority == 'Very Low' %}
+    <li class="list-group-item">
+        <h3>{{i.name}}</h3>
+        <p>{{i.price}}</p>
+    </li>
+    {% endif %}
+    {% endfor %}
+</ul>
+
+<div class="col-md-1"></div>
+
+{% endif %}
+{% endblock %}

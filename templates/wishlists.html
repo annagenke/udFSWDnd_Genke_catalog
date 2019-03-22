@@ -1,0 +1,43 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+<div class="jumbotron">
+    <h1>Wish Lists</h1>
+</div>
+
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+
+<ul>
+    {% for message in messages %}
+    <div class='alert alert-info'>
+        <li><strong> {{ message }} </strong></li>
+    </div>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+
+
+<div class="row padding-top">
+
+<div class="col-md-1">
+    <a href="{{url_for('add_wish_list')}}">
+        <button class="btn btn-default btn-md">
+            <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>Add WishList
+        </button>
+    </a>
+</div>
+</div>
+
+<div class="list-group">
+    {% for wish_list in wish_lists %}
+    <a href="{{url_for('show_wish_list', wish_list_id = wish_list.id)}}" class="list-group-item">
+        <h3>{{wish_list.name}}
+            <small>{{wish_list.user.name}}</small>
+        </h3>
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}
