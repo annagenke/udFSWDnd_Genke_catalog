@@ -1,5 +1,10 @@
-from flask import Flask, render_template, request, redirect
-from flask import jsonify, url_for, flash
+from flask import(Flask,
+                  render_template,
+                  request,
+                  redirect,
+                  jsonify,
+                  url_for,
+                  flash)
 
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
@@ -35,6 +40,13 @@ session = DBSession()
 # Store it in session for later validation
 @app.route('/login')
 def show_login():
+    """
+    method: shows the login page for the application
+    arg:
+        no arguments | app route '/login'
+    return:
+        renders template for login.html with session state
+    """
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in range(32))
     login_session['state'] = state
@@ -43,6 +55,14 @@ def show_login():
 
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
+    """
+    method: Uses google oath to create or check a session state and
+    authorize access to all application features.
+    arg:
+        no arguments | app route '/gconnect'
+    return:
+        Authorizes user access, redirects to wish lists
+    """
     # Validate state token
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
@@ -137,6 +157,13 @@ def gconnect():
 
 @app.route('/gdisconnect')
 def gdisconnect():
+    """
+    method: revokes user authorization
+    args:
+        no arguments | app route '/gdisconnect'
+    return:
+        no return value
+    """
     access_token = login_session.get('access_token')
     if access_token is None:
         print('Access Token is None')
@@ -175,6 +202,14 @@ def gdisconnect():
 # JSON APIs to view WishList Information
 @app.route('/wish_list/<int:wish_list_id>/list/JSON')
 def wish_list_JSON(wish_list_id):
+    """
+    method: gets the JSON object representation of a wish list
+    args:
+        wish_list_id
+        app route '/wish_list/<int:wish_list_id>/list/JSON'
+    return:
+        JSON representation of a wish list
+    """
     wish_list = session.query(WishList).filter_by(id=wish_list_id).one()
     items = session.query(Item).filter_by(wish_list_id=wish_list_id).all()
     return jsonify(Items=[i.serialize for i in items])
@@ -182,12 +217,28 @@ def wish_list_JSON(wish_list_id):
 
 @app.route('/wish_list/<int:wish_list_id>/item/<int:item_id>/JSON')
 def item_JSON(wish_list_id, item_id):
+    """
+      method: gets the JSON object representation of a wish list item
+      args:
+          wish_list_id, item_id
+          app route '/wish_list/<int:wish_list_id>/item/<int:item_id>/JSON'
+      return:
+          JSON representation of a wish list item
+      """
     item = session.query(Item).filter_by(id=item_id).one()
     return jsonify(Item=item.serialize)
 
 
 @app.route('/wish_list/JSON')
 def all_wish_lists_JSON():
+    """
+      method: gets the JSON object representation of all wish lists
+      args:
+          no argument
+          app route '/wish_list/JSON'
+      return:
+          JSON representation of all wish lists
+      """
     all_wish_lists = session.query(WishList).all()
     return jsonify(all_wish_lists=[r.serialize for r in all_wish_lists])
 
@@ -196,6 +247,15 @@ def all_wish_lists_JSON():
 @app.route('/')
 @app.route('/wish_list/')
 def show_all_wish_lists():
+    """
+      method: page that shows all wish lists. If the user is logged in, they
+      may create a list
+      args:
+          app route '/'
+          app route '/wish_list/'
+      return:
+          renders the publicwishlists.html or wishlists.html
+      """
     all_wish_lists = session.query(WishList)\
         .order_by(asc(WishList.name))
     if 'username' not in login_session:
@@ -209,6 +269,14 @@ def show_all_wish_lists():
 # Create a new wish_list
 @app.route('/wish_list/new/', methods=['GET', 'POST'])
 def add_wish_list():
+    """
+      method: page with form for adding a wish list
+      args:
+          app route '/wish_list/new/'
+      return:
+          renders the addwishlist.html or commits new wish list
+          to the db
+      """
     if 'username' not in login_session:
         return redirect('/login')
     if request.method == 'POST':
@@ -225,6 +293,15 @@ def add_wish_list():
 # Edit a wish_list
 @app.route('/wish_list/<int:wish_list_id>/edit/', methods=['GET', 'POST'])
 def edit_wish_list(wish_list_id):
+    """
+      method: page with form for editing a wish list
+      args:
+          app route '/wish_list/<int:wish_list_id>/edit/'
+          wish_list_id
+      return:
+          renders the editwishlist.html or commits change to wish list
+          to the db
+      """
     if 'username' not in login_session:
         return redirect('/login')
     edited_wish_list = session.query(WishList).filter_by(id=wish_list_id).one()
@@ -245,6 +322,14 @@ def edit_wish_list(wish_list_id):
 # Delete a wish_list
 @app.route('/wish_list/<int:wish_list_id>/delete/', methods=['GET', 'POST'])
 def delete_wish_list(wish_list_id):
+    """
+      method: Deletes a wish list from the database
+      args:
+          app route '/wish_list/<int:wish_list_id>/delete/'
+          wish_list_id
+      return:
+          redirects to the show wish lists page
+      """
     if 'username' not in login_session:
         return redirect('/login')
     wish_list_to_delete = session.query(WishList)\
@@ -265,6 +350,15 @@ def delete_wish_list(wish_list_id):
 @app.route('/wish_list/<int:wish_list_id>/')
 @app.route('/wish_list/<int:wish_list_id>/list/')
 def show_wish_list(wish_list_id):
+    """
+      method: shows the contents of the wish list
+      args:
+          app route '/wish_list/<int:wish_list_id>/'
+          app route '/wish_list/<int:wish_list_id>/list/'
+          wish_list_id
+      return:
+          renders the wishlist.html page or publicwishlist.html page
+      """
     wish_list = session.query(WishList).filter_by(id=wish_list_id).one()
     creator = get_user_info(wish_list.user_id)
     items = session.query(Item).filter_by(wish_list_id=wish_list_id).all()
@@ -281,6 +375,14 @@ def show_wish_list(wish_list_id):
 # Create a new item
 @app.route('/wish_list/<int:wish_list_id>/items/new/', methods=['GET', 'POST'])
 def add_item(wish_list_id):
+    """
+    method: adds an item to a wish list using a form
+    args:
+        app route '/wish_list/<int:wish_list_id>/items/new/'
+        wish_list_id
+    return:
+        renders the additem.html page or commits the new item to the db
+    """
     if 'username' not in login_session:
         return redirect('/login')
     wish_list = session.query(WishList).filter_by(id=wish_list_id).one()
@@ -302,6 +404,15 @@ def add_item(wish_list_id):
 @app.route('/wish_list/<int:wish_list_id>/items/<int:item_id>/edit',
            methods=['GET', 'POST'])
 def edit_item(wish_list_id, item_id):
+    """
+    method: edits an item in a wish list using a form
+    args:
+        app route '/wish_list/<int:wish_list_id>/items/<int:item_id>/edit'
+        wish_list_id
+        item_id
+    return:
+        renders the edititem.html page or commits the change to item to the db
+    """
     if 'username' not in login_session:
         return redirect('/login')
     edited_item = session.query(Item).filter_by(id=item_id)\
@@ -332,6 +443,15 @@ def edit_item(wish_list_id, item_id):
 @app.route('/wish_list/<int:wish_list_id>/items/<int:item_id>/delete',
            methods=['GET', 'POST'])
 def delete_item(wish_list_id, item_id):
+    """
+    method: deletes an item in a wish list using a form
+    args:
+        app route '/wish_list/<int:wish_list_id>/items/<int:item_id>/delete'
+        wish_list_id
+        item_id
+    return:
+        commits the item delete to the db
+    """
     if 'username' not in login_session:
         return redirect('/login')
     wish_list = session.query(WishList).filter_by(id=wish_list_id).one()
@@ -348,6 +468,14 @@ def delete_item(wish_list_id, item_id):
 
 
 def create_user(login_session):
+    """
+    method: helper method that creats a user if the session holder
+    isn't in the Database
+    args:
+        login_session
+    return:
+        creates user in DB
+    """
     new_user = User(name=login_session['username'], email=login_session[
         'email'], picture=login_session['picture'])
     session.add(new_user)
@@ -357,11 +485,25 @@ def create_user(login_session):
 
 
 def get_user_info(user_id):
+    """
+    method: helper method that gets the user info that matches the user_id
+    arg:
+        user_id
+    return:
+        user info
+    """
     user = session.query(User).filter_by(id=user_id).one()
     return user
 
 
 def get_user_id(email):
+    """
+    method: helper method that gets the user_id that matches the email address
+    arg:
+        email address of user
+    return:
+        user_id
+    """
     try:
         user = session.query(User).filter_by(email=email).one()
         return user.id
